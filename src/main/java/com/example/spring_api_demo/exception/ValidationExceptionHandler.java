@@ -15,8 +15,19 @@ public class ValidationExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationErrors(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
+        // Field-level errors
         ex.getBindingResult().getFieldErrors().forEach(error ->
                 errors.put(error.getField(), error.getDefaultMessage()));
+
+        // Class-level errors
+        ex.getBindingResult().getGlobalErrors().forEach(error ->
+                errors.put(error.getObjectName(), error.getDefaultMessage()));
+        /*ex.getBindingResult().getGlobalErrors().forEach(error ->
+                errors.put("confirmPassword", error.getDefaultMessage())
+        );*/
+
+
+
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 }
