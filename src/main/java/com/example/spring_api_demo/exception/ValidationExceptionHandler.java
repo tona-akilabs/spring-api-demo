@@ -20,11 +20,13 @@ public class ValidationExceptionHandler {
                 errors.put(error.getField(), error.getDefaultMessage()));
 
         // Class-level errors
-        ex.getBindingResult().getGlobalErrors().forEach(error ->
-                errors.put(error.getObjectName(), error.getDefaultMessage()));
-        /*ex.getBindingResult().getGlobalErrors().forEach(error ->
-                errors.put("confirmPassword", error.getDefaultMessage())
-        );*/
+        ex.getBindingResult().getGlobalErrors().forEach(error -> {
+            String key = switch (error.getCode()) {
+                case "PasswordMatches" -> "confirmPassword";
+                default -> error.getObjectName();
+            };
+            errors.put(key, error.getDefaultMessage());
+        });
 
 
 
